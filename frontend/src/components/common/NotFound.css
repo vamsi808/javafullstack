@@ -1,0 +1,32 @@
+.not-found-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    animation: fadeIn 0.4s ease;
+}
+
+.not-found-content {
+    text-align: center;
+    padding: 48px;
+    max-width: 480px;
+    width: 100%;
+}
+
+.warning-icon {
+    color: var(--warning-color);
+    margin-bottom: 24px;
+}
+
+.not-found-content h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+}
+
+.not-found-content p {
+    color: var(--text-secondary);
+    margin-bottom: 32px;
+    font-size: 1.1rem;
+}

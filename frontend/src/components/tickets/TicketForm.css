@@ -1,0 +1,46 @@
+.ticket-form-page {
+    animation: fadeIn 0.4s ease;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.back-btn {
+    padding: 8px;
+}
+
+.form-container {
+    padding: 32px;
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+.required {
+    color: var(--danger-color);
+}
+
+.textarea-field {
+    resize: vertical;
+    line-height: 1.5;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border-color);
+}
