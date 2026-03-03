@@ -1,0 +1,60 @@
+# Java/Maven Build Artifacts
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.log
+backend/bin/
+
+# Node/React/JS Build Artifacts and Dependencies
+node_modules/
+dist/
+build/
+.npm
+.eslintcache
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# IDEs and Editors
+.idea/
+*.iml
+*.iws
+.vscode/
+*.sublime-project
+*.sublime-workspace
+.classpath
+.project
+.settings/
+.factorypath
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS Specific
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Environment and Secrets
+.env
+.env.local
+.env.*.local
+*.p12
+*.pem
+*.jks
+
+# Spring Boot specific (Allowing main config but ignoring potential overrides/secrets)
+# NOTE: Be careful with application.properties if it contains DB passwords.
+# It's recommended to use environment variables for secrets.
+**/application-*.properties
+**/application-*.yml
+# !**/src/main/resources/application.properties
+# !**/src/main/resources/application.yml
