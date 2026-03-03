@@ -33,9 +33,9 @@ public class TicketController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/contact/{contactId}")
-    public ResponseEntity<List<Ticket>> getTicketsByContact(@PathVariable String contactId) {
-        return ResponseEntity.ok(ticketService.getTicketsByContact(contactId));
+    @GetMapping("/contact/email/{email}")
+    public ResponseEntity<List<Ticket>> getTicketsByContactEmail(@PathVariable String email) {
+        return ResponseEntity.ok(ticketService.getTicketsByContactEmail(email));
     }
 
     @PostMapping

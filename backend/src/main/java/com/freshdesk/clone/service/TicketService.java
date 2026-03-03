@@ -26,8 +26,8 @@ public class TicketService {
         return ticketRepository.findById(id);
     }
 
-    public List<Ticket> getTicketsByContact(String contactId) {
-        return ticketRepository.findByContactId(contactId);
+    public List<Ticket> getTicketsByContactEmail(String email) {
+        return ticketRepository.findByContactEmail(email);
     }
 
     public Ticket createTicket(Ticket ticket) {
@@ -38,9 +38,20 @@ public class TicketService {
         return ticketRepository.findById(id).map(ticket -> {
             ticket.setTitle(ticketDetails.getTitle());
             ticket.setDescription(ticketDetails.getDescription());
+            
+            // If status changed to 'Resolved' or 'Closed', set resolvedAt
+            if (ticketDetails.getStatus() != null && 
+               (ticketDetails.getStatus().equalsIgnoreCase("Resolved") || 
+                ticketDetails.getStatus().equalsIgnoreCase("Closed")) &&
+                ticket.getResolvedAt() == null) {
+                ticket.setResolvedAt(java.time.LocalDateTime.now());
+            }
+            
             ticket.setStatus(ticketDetails.getStatus());
             ticket.setPriority(ticketDetails.getPriority());
             ticket.setContactId(ticketDetails.getContactId());
+            ticket.setContactEmail(ticketDetails.getContactEmail());
+            ticket.setFeedback(ticketDetails.getFeedback());
             return ticketRepository.save(ticket);
         }).orElseThrow(() -> new RuntimeException("Ticket not found with id " + id));
     }

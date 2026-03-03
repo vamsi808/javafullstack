@@ -20,9 +20,9 @@ const Sidebar = () => {
                     <Ticket size={20} />
                     <span>Tickets</span>
                 </NavLink>
-                <NavLink to="/contacts" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+                <NavLink to="/profile" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
                     <Users size={20} />
-                    <span>Contacts</span>
+                    <span>Profile</span>
                 </NavLink>
             </nav>
 

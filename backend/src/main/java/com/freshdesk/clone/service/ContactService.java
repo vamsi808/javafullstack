@@ -12,10 +12,12 @@ import java.util.Optional;
 public class ContactService {
 
     private final ContactRepository contactRepository;
+    private final AuthService authService;
 
     @Autowired
-    public ContactService(ContactRepository contactRepository) {
+    public ContactService(ContactRepository contactRepository, AuthService authService) {
         this.contactRepository = contactRepository;
+        this.authService = authService;
     }
 
     public List<Contact> getAllContacts() {
@@ -27,7 +29,9 @@ public class ContactService {
     }
 
     public Contact createContact(Contact contact) {
-        return contactRepository.save(contact);
+        Contact savedContact = contactRepository.save(contact);
+        authService.createCustomerUser(savedContact.getEmail(), savedContact.getName());
+        return savedContact;
     }
 
     public Contact updateContact(String id, Contact contactDetails) {

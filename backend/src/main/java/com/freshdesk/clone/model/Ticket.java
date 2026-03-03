@@ -16,6 +16,12 @@ public class Ticket {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
+    @Column(name = "contact_id")
+    private String contactId;
+
+    @NotBlank(message = "Contact email is mandatory")
+    private String contactEmail;
+
     @NotBlank(message = "Title is mandatory")
     private String title;
 
@@ -25,11 +31,14 @@ public class Ticket {
     private String status;
     private String priority;
     
-    @Column(name = "contact_id")
-    private String contactId;
-
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
+
+    @Column(name = "resolved_at")
+    private LocalDateTime resolvedAt;
+
+    @Column(columnDefinition = "TEXT")
+    private String feedback;
     
     @PrePersist
     protected void onCreate() {

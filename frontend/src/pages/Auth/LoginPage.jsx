@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { Lock, Mail, Github, LogIn, Loader2, AlertCircle } from 'lucide-react';
 import { loginSchema, getPasswordStrength } from '../../utils/validation';
 import Input from '../../components/common/Input';
+import { useAuth } from '../../context/AuthContext';
 
 /**
  * Premium Login Page with Glassmorphism, Animations, and robust Validation.
@@ -21,6 +19,9 @@ const LoginPage = () => {
     const [attempts, setAttempts] = useState(0);
     const [isLocked, setIsLocked] = useState(false);
     const [lockTime, setLockTime] = useState(0);
+
+    const { login } = useAuth();
+    const navigate = useNavigate();
 
     const {
         register,
@@ -55,29 +56,28 @@ const LoginPage = () => {
         setLoading(true);
         setServerError(null);
 
-        // Simulate server delay
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+        try {
+            const user = await login(data.email, data.password);
 
-        // Simulate "Invalid Credentials" and Rate Limiting
-        if (data.email !== 'admin@freshdesk.com' || data.password !== 'Admin@123') {
+            if (user.role === 'CUSTOMER' && !user.isPasswordSet) {
+                navigate('/set-password');
+            } else {
+                navigate(user.role === 'ADMIN' ? '/dashboard' : '/portal');
+            }
+        } catch (err) {
             const newAttempts = attempts + 1;
             setAttempts(newAttempts);
 
             if (newAttempts >= 5) {
                 setIsLocked(true);
-                setLockTime(10); // Lock for 10 seconds as per requirement
+                setLockTime(10);
                 setServerError('Too many failed attempts. Account locked for 10s.');
             } else {
-                setServerError('Invalid email or password. Please try again.');
+                setServerError(err || 'Invalid email or password.');
             }
+        } finally {
             setLoading(false);
-            return;
         }
-
-        // Success logic placeholder
-        console.log('Login successful!', data);
-        setLoading(false);
-        // Redirect logic would go here
     };
 
     return (

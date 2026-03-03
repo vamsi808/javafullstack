@@ -9,4 +9,7 @@ import java.util.List;
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket, String> {
     List<Ticket> findByContactId(String contactId);
+    List<Ticket> findByContactEmail(String contactEmail);
+    long countByStatus(String status);
+    long countByPriority(String priority);
 }
