@@ -2,8 +2,12 @@
 FROM maven:3.8.4-openjdk-17-slim AS build
 WORKDIR /app
 COPY pom.xml .
+# Download dependencies first so this layer is cached
+RUN mvn dependency:go-offline
+
+# Then copy source and package components offline
 COPY src ./src
-RUN mvn clean package -DskipTests
+RUN mvn clean package -DskipTests -o
 
 # Run stage
 FROM eclipse-temurin:17-jdk-jammy
