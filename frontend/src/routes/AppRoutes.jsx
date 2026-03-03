@@ -1,13 +1,9 @@
-import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import Dashboard from '../pages/Dashboard';
-import TicketsPage from '../pages/TicketsPage';
-import ContactsPage from '../pages/ContactsPage';
-import NotFound from '../components/common/NotFound';
+import LoginPage from '../pages/Auth/LoginPage';
 
 const AppRoutes = () => {
     return (
         <Routes>
+            <Route path="/login" element={<LoginPage />} />
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/tickets/*" element={<TicketsPage />} />

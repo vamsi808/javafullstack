@@ -1,4 +1,32 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-background-start text-white;
+  }
+}
+
+@keyframes shake {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-4px);
+  }
+
+  75% {
+    transform: translateX(4px);
+  }
+}
+
+.animate-shake {
+  animation: shake 0.2s ease-in-out 0s 2;
+}
 
 :root {
   --primary-color: #1a56db;
@@ -131,13 +159,16 @@ body {
   width: 8px;
   height: 8px;
 }
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 4px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
@@ -152,10 +183,25 @@ body {
   text-transform: uppercase;
 }
 
-.badge-open { background-color: #fef3c7; color: #92400e; }
-.badge-pending { background-color: #e0e7ff; color: #3730a3; }
-.badge-resolved { background-color: #d1fae5; color: #065f46; }
-.badge-closed { background-color: #f1f5f9; color: #475569; }
+.badge-open {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.badge-pending {
+  background-color: #e0e7ff;
+  color: #3730a3;
+}
+
+.badge-resolved {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.badge-closed {
+  background-color: #f1f5f9;
+  color: #475569;
+}
 
 /* Page Header */
 .page-header {
