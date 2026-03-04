@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Ticket, Clock, CheckCircle, MessageSquare, Plus, RefreshCw, Star } from 'lucide-react';
+import { Ticket, Clock, CheckCircle, MessageSquare, Plus, RefreshCw, Star, AlertCircle } from 'lucide-react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
