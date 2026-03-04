@@ -1,6 +1,5 @@
 import { useLocation } from 'react-router-dom';
 import AppRoutes from './routes/AppRoutes';
-import Sidebar from './components/common/Sidebar';
 import Navbar from './components/common/Navbar';
 import { useAuth } from './context/AuthContext';
 
@@ -18,20 +17,17 @@ function App() {
         );
     }
 
-    // Hide sidebar/navbar for auth pages, customers, or when not logged in
+    // Hide navbar for auth pages, customers, or when not logged in
     if (isAuthPage || isPortal || !user || user.role !== 'ADMIN') {
         return <AppRoutes />;
     }
 
     return (
-        <div className="app-container">
-            <Sidebar />
-            <div className="main-content">
-                <Navbar />
-                <main className="content-area">
-                    <AppRoutes />
-                </main>
-            </div>
+        <div className="flex flex-col min-h-screen bg-background-start">
+            <Navbar />
+            <main className="flex-1 overflow-y-auto">
+                <AppRoutes />
+            </main>
         </div>
     );
 }
