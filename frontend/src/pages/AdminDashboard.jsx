@@ -7,6 +7,16 @@ import { motion } from 'framer-motion';
 const AdminDashboard = () => {
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [pendingUsers, setPendingUsers] = useState([]);
+
+    const fetchPendingUsers = async () => {
+        try {
+            const response = await api.get('/users/pending');
+            setPendingUsers(response.data);
+        } catch (error) {
+            console.error("Failed to fetch pending users", error);
+        }
+    };
 
     useEffect(() => {
         const fetchStats = async () => {
@@ -20,7 +30,17 @@ const AdminDashboard = () => {
             }
         };
         fetchStats();
+        fetchPendingUsers();
     }, []);
+
+    const handleApproveUser = async (userId) => {
+        try {
+            await api.put(`/users/${userId}/approve`);
+            fetchPendingUsers(); // refresh the list
+        } catch (error) {
+            console.error("Failed to approve user", error);
+        }
+    };
 
     if (loading) return (
         <div className="flex flex-col items-center justify-center min-h-[400px] h-full space-y-4">
@@ -193,6 +213,38 @@ const AdminDashboard = () => {
                     )}
                 </div>
             </div>
+
+            {/* Pending Approvals Box */}
+            {pendingUsers.length > 0 && (
+                <div className="glass-panel p-6 border-amber-500/20 shadow-amber-500/5">
+                    <div className="flex items-center gap-3 mb-6">
+                        <Users className="text-amber-400" />
+                        <h2 className="text-xl font-bold text-white">Pending Approvals</h2>
+                        <span className="bg-amber-500/20 text-amber-500 px-2.5 py-0.5 rounded-full text-xs font-bold border border-amber-500/30">
+                            {pendingUsers.length} New
+                        </span>
+                    </div>
+
+                    <div className="space-y-4">
+                        {pendingUsers.map(user => (
+                            <div key={user.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-slate-800/50 rounded-xl border border-slate-700 hover:border-amber-500/50 transition-all">
+                                <div>
+                                    <h3 className="text-white font-bold text-lg">{user.name}</h3>
+                                    <p className="text-slate-400 text-sm">{user.email}</p>
+                                </div>
+                                <div className="mt-4 sm:mt-0 flex gap-3">
+                                    <button
+                                        onClick={() => handleApproveUser(user.id)}
+                                        className="px-4 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-lg text-sm font-bold transition-all flex items-center gap-2"
+                                    >
+                                        <CheckCircle size={16} /> Approve Access
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
         </motion.div>
     );
 };

@@ -22,6 +22,8 @@ public class Ticket {
     @NotBlank(message = "Contact email is mandatory")
     private String contactEmail;
 
+    private String assignedToEmail; // The admin or specific agent handling the ticket
+
     @NotBlank(message = "Title is mandatory")
     private String title;
 

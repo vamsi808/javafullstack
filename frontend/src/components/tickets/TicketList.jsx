@@ -37,6 +37,15 @@ const TicketList = () => {
         }
     };
 
+    const handleSolve = async (ticket) => {
+        try {
+            await ticketService.update(ticket.id, { ...ticket, status: 'Resolved' });
+            fetchTickets(); // Refresh the list
+        } catch (error) {
+            console.error('Failed to solve ticket:', error);
+        }
+    };
+
     // Filter 
     const filteredTickets = tickets.filter(ticket =>
         ticket.title.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
@@ -107,12 +116,12 @@ const TicketList = () => {
                     <>
                         {viewMode === 'table' ? (
                             <div className="glass-panel overflow-hidden">
-                                <TicketTable tickets={paginatedTickets} />
+                                <TicketTable tickets={paginatedTickets} onSolve={handleSolve} />
                             </div>
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                                 {paginatedTickets.map(ticket => (
-                                    <TicketCard key={ticket.id} ticket={ticket} />
+                                    <TicketCard key={ticket.id} ticket={ticket} onSolve={handleSolve} />
                                 ))}
                             </div>
                         )}

@@ -34,6 +34,8 @@ public class User implements UserDetails {
 
     private boolean isPasswordSet;
 
+    private boolean isApproved;
+
     private String name;
 
     @Override
@@ -63,6 +65,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return isApproved;
     }
 }

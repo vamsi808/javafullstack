@@ -28,6 +28,10 @@ public class AuthService {
         var user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
+        if (!user.isApproved()) {
+            throw new RuntimeException("Account pending admin approval");
+        }
+        
         var jwtToken = jwtService.generateToken(user);
         Map<String, Object> response = new HashMap<>();
         response.put("token", jwtToken);
@@ -52,6 +56,7 @@ public class AuthService {
                     .name(name)
                     .role(Role.CUSTOMER)
                     .isPasswordSet(false)
+                    .isApproved(true) // Created by admin, so approved by default
                     // Set a default random password or leave empty if your security allows
                     .password(passwordEncoder.encode("Temporary123!")) 
                     .build();
@@ -66,9 +71,25 @@ public class AuthService {
                     .name(name)
                     .role(Role.ADMIN)
                     .isPasswordSet(true)
+                    .isApproved(true)
                     .password(passwordEncoder.encode(password))
                     .build();
             userRepository.save(user);
         }
+    }
+
+    public void register(String name, String email, String password) {
+        if (userRepository.existsByEmail(email)) {
+            throw new RuntimeException("Email already signed up.");
+        }
+        User user = User.builder()
+                .name(name)
+                .email(email)
+                .role(Role.CUSTOMER)
+                .isPasswordSet(true)
+                .isApproved(false) // Needs admin approval to login
+                .password(passwordEncoder.encode(password))
+                .build();
+        userRepository.save(user);
     }
 }

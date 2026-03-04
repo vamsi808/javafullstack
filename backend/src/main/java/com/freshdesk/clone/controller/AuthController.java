@@ -26,6 +26,12 @@ public class AuthController {
         return ResponseEntity.ok("Password set successfully");
     }
 
+    @PostMapping("/register")
+    public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
+        authService.register(request.getName(), request.getEmail(), request.getPassword());
+        return ResponseEntity.ok("User registered successfully. Pending admin approval.");
+    }
+
     @Data
     public static class LoginRequest {
         private String email;
@@ -36,5 +42,12 @@ public class AuthController {
     public static class SetPasswordRequest {
         private String email;
         private String newPassword;
+    }
+
+    @Data
+    public static class RegisterRequest {
+        private String name;
+        private String email;
+        private String password;
     }
 }

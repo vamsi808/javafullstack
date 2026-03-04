@@ -5,6 +5,7 @@ import AdminProfile from '../pages/AdminProfile';
 import TicketsPage from '../pages/TicketsPage';
 import ContactsPage from '../pages/ContactsPage';
 import LoginPage from '../pages/Auth/LoginPage';
+import SignupPage from '../pages/Auth/SignupPage';
 import SetPasswordPage from '../pages/Auth/SetPasswordPage';
 import CustomerPortal from '../pages/CustomerPortal';
 import NotFound from '../components/common/NotFound';
@@ -15,6 +16,7 @@ const AppRoutes = () => {
         <Routes>
             {/* Public Routes */}
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<SignupPage />} />
 
             {/* Customer Routes */}
             <Route path="/set-password" element={

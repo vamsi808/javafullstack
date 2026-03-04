@@ -1,9 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Clock, User, AlertCircle } from 'lucide-react';
+import { Clock, User, AlertCircle, CheckCircle } from 'lucide-react';
 import { formatDate } from '../../utils/helpers';
 
-const TicketCard = ({ ticket }) => {
+const TicketCard = ({ ticket, onSolve }) => {
     const navigate = useNavigate();
 
     const getStatusStyle = (status) => {
@@ -43,6 +43,20 @@ const TicketCard = ({ ticket }) => {
             <p className="text-sm text-slate-400 mb-6 flex-grow line-clamp-3">
                 {ticket.description}
             </p>
+
+            {ticket.status !== 'Resolved' && ticket.status !== 'Closed' && (
+                <div className="mb-4 flex justify-end">
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            if (onSolve) onSolve(ticket);
+                        }}
+                        className="text-emerald-400 hover:text-white bg-emerald-500/10 hover:bg-emerald-500/20 px-3 py-1.5 rounded border border-emerald-500/20 text-xs font-bold transition-all inline-flex items-center gap-1"
+                    >
+                        <CheckCircle size={14} /> Mark Solved
+                    </button>
+                </div>
+            )}
 
             <div className="flex items-center justify-between pt-4 border-t border-slate-700/50 mt-auto">
                 <div className="flex items-center gap-1.5 text-xs text-slate-500">

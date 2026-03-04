@@ -6,7 +6,7 @@ import { useAuth } from './context/AuthContext';
 function App() {
     const { user, loading } = useAuth();
     const location = useLocation();
-    const isAuthPage = location.pathname === '/login' || location.pathname === '/set-password';
+    const isAuthPage = location.pathname === '/login' || location.pathname === '/set-password' || location.pathname === '/register';
     const isPortal = location.pathname === '/portal';
 
     if (loading) {

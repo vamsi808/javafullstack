@@ -12,6 +12,9 @@ const CustomerPortal = () => {
     const [selectedTicket, setSelectedTicket] = useState(null);
     const [feedback, setFeedback] = useState('');
     const [submitting, setSubmitting] = useState(false);
+    const [activeTab, setActiveTab] = useState('active'); // 'active' or 'past'
+    const [isRaisingTicket, setIsRaisingTicket] = useState(false);
+    const [newTicket, setNewTicket] = useState({ title: '', description: '', priority: 'Medium' });
 
     const fetchTickets = async () => {
         try {
@@ -52,10 +55,39 @@ const CustomerPortal = () => {
                 status: 'Open'
             });
             await fetchTickets();
+            setSelectedTicket(null);
         } catch (error) {
             console.error("Failed to re-open ticket", error);
         }
     };
+
+    const handleCreateTicket = async (e) => {
+        e.preventDefault();
+        setSubmitting(true);
+        try {
+            await axios.post('/api/v1/tickets', {
+                contactEmail: user.email,
+                contactId: user.id || 'Customer ID',
+                assignedToEmail: 'admin@freshdesk.com', // Auto assigned to admin
+                title: newTicket.title,
+                description: newTicket.description,
+                priority: newTicket.priority,
+                status: 'Open'
+            });
+            await fetchTickets();
+            setIsRaisingTicket(false);
+            setNewTicket({ title: '', description: '', priority: 'Medium' });
+            setActiveTab('active');
+        } catch (error) {
+            console.error("Failed to create ticket", error);
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    const activeTickets = tickets.filter(t => ['Open', 'Pending'].includes(t.status));
+    const pastTickets = tickets.filter(t => ['Resolved', 'Closed'].includes(t.status));
+    const displayedTickets = activeTab === 'active' ? activeTickets : pastTickets;
 
     if (loading) return (
         <div className="min-h-screen bg-background-start flex items-center justify-center">
@@ -95,7 +127,10 @@ const CustomerPortal = () => {
                         </div>
                     </div>
 
-                    <button className="w-full py-4 bg-primary hover:bg-primary-hover rounded-2xl font-bold shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2 group">
+                    <button
+                        onClick={() => setIsRaisingTicket(true)}
+                        className="w-full py-4 bg-primary hover:bg-primary-hover rounded-2xl font-bold shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2 group"
+                    >
                         <Plus className="group-hover:rotate-90 transition-transform" />
                         Raise New Ticket
                     </button>
@@ -103,19 +138,43 @@ const CustomerPortal = () => {
 
                 {/* Ticket List */}
                 <div className="lg:col-span-2 space-y-4">
-                    <h2 className="text-xl font-bold flex items-center gap-2 mb-6">
-                        <Ticket size={24} className="text-secondary" />
-                        Your Recent Tickets
-                    </h2>
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                        <h2 className="text-xl font-bold flex items-center gap-2">
+                            <Ticket size={24} className="text-secondary" />
+                            Your Tickets
+                        </h2>
 
-                    <AnimatePresence>
-                        {tickets.length > 0 ? (
-                            tickets.map((ticket) => (
+                        <div className="flex items-center gap-2 p-1 bg-slate-800/50 rounded-xl border border-slate-700 w-fit">
+                            <button
+                                onClick={() => setActiveTab('active')}
+                                className={clsx(
+                                    "px-4 py-2 rounded-lg text-sm font-bold transition-all",
+                                    activeTab === 'active' ? "bg-primary text-white shadow" : "text-slate-400 hover:text-white"
+                                )}
+                            >
+                                Active ({activeTickets.length})
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('past')}
+                                className={clsx(
+                                    "px-4 py-2 rounded-lg text-sm font-bold transition-all",
+                                    activeTab === 'past' ? "bg-slate-700 text-white shadow" : "text-slate-400 hover:text-white"
+                                )}
+                            >
+                                Past ({pastTickets.length})
+                            </button>
+                        </div>
+                    </div>
+
+                    <AnimatePresence mode="popLayout">
+                        {displayedTickets.length > 0 ? (
+                            displayedTickets.map((ticket) => (
                                 <motion.div
                                     key={ticket.id}
                                     layout
                                     initial={{ opacity: 0, x: -20 }}
                                     animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, scale: 0.9 }}
                                     className="bg-slate-900/30 border border-slate-800 hover:border-slate-700 rounded-2xl p-5 transition-all group cursor-pointer"
                                     onClick={() => setSelectedTicket(ticket)}
                                 >
@@ -144,10 +203,27 @@ const CustomerPortal = () => {
                                 </motion.div>
                             ))
                         ) : (
-                            <div className="text-center py-20 border-2 border-dashed border-slate-800 rounded-3xl">
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className="text-center py-20 border-2 border-dashed border-slate-800 rounded-3xl"
+                            >
                                 <MessageSquare className="mx-auto text-slate-700 mb-4" size={48} />
-                                <p className="text-slate-500 italic">No tickets found. Raise one above!</p>
-                            </div>
+                                <h3 className="text-lg font-bold mb-1">
+                                    {activeTab === 'active' ? "Nill" : "No Past Tickets"}
+                                </h3>
+                                <p className="text-slate-500 text-sm">
+                                    {activeTab === 'active' ? "You have no open issues. Enjoy your day!" : "You have not resolved any tickets yet."}
+                                </p>
+                                {activeTab === 'active' && (
+                                    <button
+                                        onClick={() => setIsRaisingTicket(true)}
+                                        className="mt-6 px-6 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-primary font-bold text-sm transition-all border border-slate-700"
+                                    >
+                                        Raise One Now
+                                    </button>
+                                )}
+                            </motion.div>
                         )}
                     </AnimatePresence>
                 </div>
@@ -228,6 +304,82 @@ const CustomerPortal = () => {
                                     </div>
                                 )}
                             </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Raise Ticket Modal */}
+            <AnimatePresence>
+                {isRaisingTicket && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+                        onClick={() => setIsRaisingTicket(false)}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, y: 20 }}
+                            animate={{ scale: 1, y: 0 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            className="bg-slate-900 border border-slate-700 w-full max-w-lg rounded-3xl p-8 shadow-2xl relative"
+                            onClick={e => e.stopPropagation()}
+                        >
+                            <div className="flex justify-between items-center mb-6">
+                                <h2 className="text-2xl font-bold flex items-center gap-2">
+                                    <Plus className="text-primary" />
+                                    Raise Ticket
+                                </h2>
+                                <button onClick={() => setIsRaisingTicket(false)} className="text-slate-500 hover:text-white transition-colors">✕</button>
+                            </div>
+
+                            <form onSubmit={handleCreateTicket} className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-400 mb-1">What's the issue?</label>
+                                    <input
+                                        type="text"
+                                        required
+                                        value={newTicket.title}
+                                        onChange={(e) => setNewTicket({ ...newTicket, title: e.target.value })}
+                                        className="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm focus:border-primary outline-none transition-all"
+                                        placeholder="Brief title of your problem..."
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-400 mb-1">Details</label>
+                                    <textarea
+                                        required
+                                        value={newTicket.description}
+                                        onChange={(e) => setNewTicket({ ...newTicket, description: e.target.value })}
+                                        className="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm focus:border-primary outline-none transition-all h-32 resize-none"
+                                        placeholder="Please provide as much detail as possible..."
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-400 mb-1">Priority</label>
+                                    <select
+                                        value={newTicket.priority}
+                                        onChange={(e) => setNewTicket({ ...newTicket, priority: e.target.value })}
+                                        className="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm outline-none cursor-pointer focus:border-primary transition-all appearance-none"
+                                    >
+                                        <option value="Low">Low - Not Urgent</option>
+                                        <option value="Medium">Medium - Normal Request</option>
+                                        <option value="High">High - System Down / Blocked</option>
+                                    </select>
+                                </div>
+                                <div className="p-3 bg-primary/10 border border-primary/20 rounded-lg flex items-start gap-3 mt-2">
+                                    <AlertCircle className="text-primary flex-shrink-0 mt-0.5" size={16} />
+                                    <p className="text-xs text-primary/80">Tickets are automatically assigned to the Central Admin to be triaged. An agent will be assigned shortly.</p>
+                                </div>
+                                <button
+                                    type="submit"
+                                    disabled={submitting}
+                                    className="w-full py-3.5 bg-primary hover:bg-primary-hover disabled:bg-slate-700 rounded-xl font-bold transition-all shadow-lg mt-6 flex items-center justify-center gap-2"
+                                >
+                                    {submitting ? "Submitting..." : "Submit Ticket"}
+                                </button>
+                            </form>
                         </motion.div>
                     </motion.div>
                 )}

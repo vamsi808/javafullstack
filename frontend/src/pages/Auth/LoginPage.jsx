@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Lock, Mail, Github, LogIn, Loader2, AlertCircle } from 'lucide-react';
@@ -219,7 +219,7 @@ const LoginPage = () => {
                     transition={{ delay: 0.8 }}
                     className="text-center mt-6 text-slate-500 text-sm"
                 >
-                    Don't have an account? <a href="#" className="text-primary hover:underline transition-all">Request access</a>
+                    Don't have an account? <Link to="/register" className="text-primary hover:underline transition-all">Request access</Link>
                 </motion.p>
             </motion.div>
         </div>

@@ -1,9 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { formatDate } from '../../utils/helpers';
-import { Mail, Clock, AlertCircle } from 'lucide-react';
+import { Mail, Clock, AlertCircle, CheckCircle } from 'lucide-react';
 
-const TicketTable = ({ tickets }) => {
+const TicketTable = ({ tickets, onSolve }) => {
     const navigate = useNavigate();
 
     const getStatusStyle = (status) => {
@@ -35,6 +35,7 @@ const TicketTable = ({ tickets }) => {
                         <th className="py-4 px-6 font-medium text-slate-400 text-sm uppercase tracking-wider">Priority</th>
                         <th className="py-4 px-6 font-medium text-slate-400 text-sm uppercase tracking-wider">Created</th>
                         <th className="py-4 px-6 font-medium text-slate-400 text-sm uppercase tracking-wider">Contact</th>
+                        <th className="py-4 px-6 font-medium text-slate-400 text-sm uppercase tracking-wider text-right">Actions</th>
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-700/50">
@@ -73,6 +74,19 @@ const TicketTable = ({ tickets }) => {
                                     <Mail size={14} className="text-slate-500" />
                                     {ticket.contactEmail || ticket.contactId || 'No email provided'}
                                 </div>
+                            </td>
+                            <td className="py-4 px-6 text-right">
+                                {ticket.status !== 'Resolved' && ticket.status !== 'Closed' && (
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            if (onSolve) onSolve(ticket);
+                                        }}
+                                        className="text-emerald-400 hover:text-white bg-emerald-500/10 hover:bg-emerald-500/20 px-3 py-1.5 rounded border border-emerald-500/20 text-xs font-bold transition-all inline-flex items-center gap-1"
+                                    >
+                                        <CheckCircle size={14} /> Solved
+                                    </button>
+                                )}
                             </td>
                         </tr>
                     ))}

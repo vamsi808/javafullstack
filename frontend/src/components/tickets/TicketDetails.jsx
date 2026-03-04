@@ -15,6 +15,8 @@ const TicketDetails = () => {
     const [loading, setLoading] = useState(true);
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [deleting, setDeleting] = useState(false);
+    const [isEditingAssignee, setIsEditingAssignee] = useState(false);
+    const [newAssignee, setNewAssignee] = useState('');
 
     useEffect(() => {
         fetchTicket();
@@ -42,6 +44,16 @@ const TicketDetails = () => {
             console.error('Failed to delete ticket:', error);
             setDeleting(false);
             setDeleteModalOpen(false);
+        }
+    };
+
+    const handleAssign = async () => {
+        try {
+            const updated = await ticketService.update(id, { ...ticket, assignedToEmail: newAssignee });
+            setTicket(updated);
+            setIsEditingAssignee(false);
+        } catch (error) {
+            console.error('Failed to assign ticket:', error);
         }
     };
 
@@ -109,10 +121,39 @@ const TicketDetails = () => {
                         </div>
 
                         <div className="property-item mt-4">
-                            <span className="property-label"><User size={16} className="inline-icon" /> Contact</span>
+                            <span className="property-label"><User size={16} className="text-slate-500 inline mr-1" /> Customer</span>
                             <span className="property-value link-text" onClick={() => navigate(`/contacts/${ticket.contactId}`)}>
-                                {ticket.contactId}
+                                {ticket.contactEmail || ticket.contactId}
                             </span>
+                        </div>
+
+                        <div className="property-item mt-4 pb-4 border-b border-slate-700/50">
+                            <div className="flex justify-between items-center w-full">
+                                <span className="property-label text-amber-500 font-bold"><User size={16} className="inline mr-1" /> Assigned To</span>
+                                {!isEditingAssignee && (
+                                    <button onClick={() => { setIsEditingAssignee(true); setNewAssignee(ticket.assignedToEmail || ''); }} className="text-xs text-primary hover:underline">
+                                        Change
+                                    </button>
+                                )}
+                            </div>
+
+                            {isEditingAssignee ? (
+                                <div className="mt-2 flex gap-2">
+                                    <input
+                                        type="email"
+                                        value={newAssignee}
+                                        onChange={(e) => setNewAssignee(e.target.value)}
+                                        className="w-full bg-slate-800 border border-slate-700 rounded p-1 text-sm outline-none focus:border-primary text-white"
+                                        placeholder="agent@freshdesk.com"
+                                    />
+                                    <button onClick={handleAssign} className="bg-primary hover:bg-primary-hover text-white px-2 rounded text-xs">Save</button>
+                                    <button onClick={() => setIsEditingAssignee(false)} className="text-slate-400 hover:text-white px-2 text-xs">Cancel</button>
+                                </div>
+                            ) : (
+                                <span className="property-value font-medium mt-1 block px-3 py-1.5 bg-slate-800 rounded-lg border border-slate-700 text-slate-300">
+                                    {ticket.assignedToEmail || 'Unassigned'}
+                                </span>
+                            )}
                         </div>
 
                         <div className="property-item">
