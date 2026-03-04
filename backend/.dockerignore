@@ -1,3 +1,4 @@
+node_modules/
 target/
 .mvn/
 !/.mvn/wrapper/maven-wrapper.jar
