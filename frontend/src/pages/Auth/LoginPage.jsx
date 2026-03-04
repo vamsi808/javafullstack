@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Lock, Mail, Github, LogIn, Loader2, AlertCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { clsx } from 'clsx';
 import { loginSchema, getPasswordStrength } from '../../utils/validation';
 import Input from '../../components/common/Input';
 import { useAuth } from '../../context/AuthContext';
