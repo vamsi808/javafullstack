@@ -9,7 +9,6 @@ import TicketTable from './TicketTable';
 import TicketCard from './TicketCard';
 import useDebounce from '../../hooks/useDebounce';
 import usePagination from '../../hooks/usePagination';
-import './TicketList.css';
 
 const TicketList = () => {
     const [tickets, setTickets] = useState([]);
@@ -56,32 +55,37 @@ const TicketList = () => {
     if (loading) return <Loader />;
 
     return (
-        <div className="ticket-list-container">
-            <div className="page-header">
-                <h1 className="page-title">Tickets</h1>
-                <button className="btn btn-primary" onClick={() => navigate('/tickets/new')}>
+        <div className="p-8 max-w-7xl mx-auto space-y-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">Tickets</h1>
+                    <p className="text-slate-400 mt-1">Manage and resolve customer inquiries.</p>
+                </div>
+                <button className="btn-primary flex items-center justify-center gap-2" onClick={() => navigate('/tickets/new')}>
                     <Plus size={18} /> New Ticket
                 </button>
             </div>
 
-            <div className="list-controls glass-panel">
-                <SearchBar
-                    value={searchTerm}
-                    onChange={setSearchTerm}
-                    onClear={() => setSearchTerm('')}
-                    placeholder="Search by ID, Title, or Status..."
-                />
+            <div className="glass-panel p-4 flex flex-col md:flex-row gap-4 items-center justify-between">
+                <div className="w-full md:max-w-md">
+                    <SearchBar
+                        value={searchTerm}
+                        onChange={setSearchTerm}
+                        onClear={() => setSearchTerm('')}
+                        placeholder="Search by ID, Title, or Status..."
+                    />
+                </div>
 
-                <div className="view-toggles">
+                <div className="flex bg-slate-800/50 p-1 rounded-lg border border-slate-700/50">
                     <button
-                        className={`toggle-btn ${viewMode === 'table' ? 'active' : ''}`}
+                        className={`p-2 rounded-md transition-colors ${viewMode === 'table' ? 'bg-primary text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-slate-700/50'}`}
                         onClick={() => setViewMode('table')}
                         title="Table View"
                     >
                         <ListIcon size={20} />
                     </button>
                     <button
-                        className={`toggle-btn ${viewMode === 'grid' ? 'active' : ''}`}
+                        className={`p-2 rounded-md transition-colors ${viewMode === 'grid' ? 'bg-primary text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-slate-700/50'}`}
                         onClick={() => setViewMode('grid')}
                         title="Grid View"
                     >
@@ -90,30 +94,36 @@ const TicketList = () => {
                 </div>
             </div>
 
-            <div className="ticket-content-area">
+            <div className="space-y-6">
                 {filteredTickets.length === 0 ? (
-                    <div className="empty-state glass-panel">
-                        <p>No tickets found matching your search.</p>
+                    <div className="glass-panel p-12 flex flex-col items-center justify-center text-center">
+                        <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mb-4">
+                            <ListIcon size={32} className="text-slate-500" />
+                        </div>
+                        <h3 className="text-xl font-medium text-white mb-2">No tickets found</h3>
+                        <p className="text-slate-400">Try adjusting your search or create a new ticket.</p>
                     </div>
                 ) : (
                     <>
                         {viewMode === 'table' ? (
-                            <div className="glass-panel table-wrapper">
+                            <div className="glass-panel overflow-hidden">
                                 <TicketTable tickets={paginatedTickets} />
                             </div>
                         ) : (
-                            <div className="tickets-grid">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                                 {paginatedTickets.map(ticket => (
                                     <TicketCard key={ticket.id} ticket={ticket} />
                                 ))}
                             </div>
                         )}
 
-                        <Pagination
-                            currentPage={currentPage}
-                            totalPages={totalPages}
-                            onPageChange={setPage}
-                        />
+                        <div className="flex justify-center pt-4">
+                            <Pagination
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                onPageChange={setPage}
+                            />
+                        </div>
                     </>
                 )}
             </div>

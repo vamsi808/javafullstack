@@ -22,7 +22,7 @@ export const contactService = {
     },
 
     delete: async (id) => {
-        await api.delete(`/contacts/${id}`);
-        return true;
+        const response = await api.delete(`/contacts/${id}`);
+        return response.data;
     }
 };

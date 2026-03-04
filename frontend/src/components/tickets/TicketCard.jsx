@@ -1,52 +1,57 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Clock, User } from 'lucide-react';
+import { Clock, User, AlertCircle } from 'lucide-react';
 import { formatDate } from '../../utils/helpers';
-import './TicketCard.css';
 
 const TicketCard = ({ ticket }) => {
     const navigate = useNavigate();
 
-    const getStatusBadge = (status) => {
-        const sl = status.toLowerCase();
-        return <span className={`badge badge-${sl}`}>{status}</span>;
+    const getStatusStyle = (status) => {
+        switch (status.toLowerCase()) {
+            case 'open': return 'bg-blue-500/10 text-blue-400 border-blue-500/20';
+            case 'pending': return 'bg-amber-500/10 text-amber-400 border-amber-500/20';
+            case 'resolved': return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
+            case 'closed': return 'bg-slate-500/10 text-slate-400 border-slate-500/20';
+            default: return 'bg-slate-500/10 text-slate-400 border-slate-500/20';
+        }
     };
 
-    const getPriorityClass = (priority) => {
+    const getPriorityBorder = (priority) => {
         switch (priority.toLowerCase()) {
-            case 'urgent': return 'priority-urgent-bg';
-            case 'high': return 'priority-high-bg';
-            case 'medium': return 'priority-medium-bg';
-            default: return 'priority-low-bg';
+            case 'urgent':
+            case 'high': return 'border-t-rose-500';
+            case 'medium': return 'border-t-amber-500';
+            default: return 'border-t-slate-500';
         }
     };
 
     return (
         <div
-            className={`ticket-card glass-panel ${getPriorityClass(ticket.priority)}`}
+            className={`glass-panel border-t-4 p-5 cursor-pointer hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/50 transition-all duration-300 flex flex-col h-full group ${getPriorityBorder(ticket.priority)}`}
             onClick={() => navigate(`/tickets/${ticket.id}`)}
         >
-            <div className="card-header">
-                <span className="ticket-id">#{ticket.id}</span>
-                {getStatusBadge(ticket.status)}
+            <div className="flex justify-between items-start mb-4">
+                <span className="text-xs font-mono text-slate-500 bg-slate-800/50 px-2 py-1 rounded-md">#{ticket.id.substring(0, 8)}</span>
+                <span className={`px-2.5 py-1 rounded-full text-xs font-bold border capitalize inline-flex items-center gap-1 ${getStatusStyle(ticket.status)}`}>
+                    {ticket.status === 'open' && <AlertCircle size={10} />}
+                    {ticket.status}
+                </span>
             </div>
 
-            <h3 className="card-title">{ticket.title}</h3>
+            <h3 className="text-lg font-bold text-white mb-2 line-clamp-2 group-hover:text-primary transition-colors">{ticket.title}</h3>
 
-            <p className="card-desc">
-                {ticket.description.length > 80
-                    ? ticket.description.substring(0, 80) + '...'
-                    : ticket.description}
+            <p className="text-sm text-slate-400 mb-6 flex-grow line-clamp-3">
+                {ticket.description}
             </p>
 
-            <div className="card-footer">
-                <div className="footer-item">
+            <div className="flex items-center justify-between pt-4 border-t border-slate-700/50 mt-auto">
+                <div className="flex items-center gap-1.5 text-xs text-slate-500">
                     <Clock size={14} />
                     <span>{formatDate(ticket.createdAt)}</span>
                 </div>
-                <div className="footer-item">
+                <div className="flex items-center gap-1.5 text-xs text-slate-400 bg-slate-800 px-2 flex-shrink border border-slate-700 w-32 py-1 overflow-hidden overflow-ellipsis rounded-md" title={ticket.contactEmail || ticket.contactId}>
                     <User size={14} />
-                    <span>{ticket.contactId}</span>
+                    <span className="truncate">{ticket.contactEmail || ticket.contactId || 'No Contact'}</span>
                 </div>
             </div>
         </div>
